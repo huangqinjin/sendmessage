@@ -180,6 +180,13 @@ LRESULT CMainDlg::DoCommand(int id, int msg)
         case IDC_SEARCHW:
             SearchWindow();
             break;
+        case IDC_WINDOW:
+            if (HWND hWnd; msg == EN_CHANGE && (hWnd = GetSelectedHandle()) != nullptr && hWnd != m_hwndFoundWindow)
+            {
+                m_hwndFoundWindow = hWnd;
+                DisplayInfoOnFoundWindow(m_hwndFoundWindow);
+            }
+            break;
         case IDC_WINDOWTREE: {
             CWindowTreeDlg treeDlg(*this, GetSelectedHandle());
             if (treeDlg.DoModal(hResource, IDD_WINDOWSTREE, *this) == IDOK)
@@ -490,7 +497,9 @@ HWND CMainDlg::GetSelectedHandle()
     ::GetDlgItemText(*this, IDC_WINDOW, buf, _countof(buf));
 
     TCHAR* endptr = nullptr;
-    return reinterpret_cast<HWND>(_tcstoui64(buf, &endptr, 0));
+    HWND hWnd = reinterpret_cast<HWND>(_tcstoui64(buf, &endptr, 0));
+    if (!IsWindow(hWnd)) hWnd = buf[0] ? FindWindow(nullptr, buf) : nullptr;
+    return hWnd;
 }
 
 bool CMainDlg::SendPostMessage(UINT id)
