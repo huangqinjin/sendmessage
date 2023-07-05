@@ -71,6 +71,7 @@ LRESULT CMainDlg::DlgFunc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 stItem.dwTypeData = (LPTSTR)TEXT("Always On Top");
                 SetMenuItemInfo(hSysMenu, SC_MAXIMIZE, FALSE, &stItem);
             }
+            m_ParentLink.ConvertStaticToHyperlink(hwndDlg, IDC_PARENT_HANDLE, _T(""));
             m_link.ConvertStaticToHyperlink(hwndDlg, IDC_ABOUTLINK, _T(""));
 
             m_hRectanglePen = CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
@@ -96,6 +97,7 @@ LRESULT CMainDlg::DlgFunc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             m_aerocontrols.SubclassControl(GetDlgItem(*this, IDC_POS));
             m_aerocontrols.SubclassControl(GetDlgItem(*this, IDC_STATIC_X_POS));
             m_aerocontrols.SubclassControl(GetDlgItem(*this, IDC_STATIC_Y_POS));
+            m_aerocontrols.SubclassControl(GetDlgItem(*this, IDC_PARENT_HANDLE));
             m_aerocontrols.SubclassControl(GetDlgItem(*this, IDC_EDIT_STATUS));
             m_aerocontrols.SubclassControl(GetDlgItem(*this, IDC_WINDOWTREE));
             m_aerocontrols.SubclassControl(GetDlgItem(*this, IDOK));
@@ -230,6 +232,16 @@ LRESULT CMainDlg::DoCommand(int id, int msg)
             {
                 SetDlgItemText(*this, IDC_RETVALUE, _T(""));
                 SetDlgItemText(*this, IDC_ERROR, _T("Window not found"));
+            }
+            break;
+        case IDC_PARENT_HANDLE:
+            if (HWND hParent = GetParent(m_hwndFoundWindow))
+            {
+                m_hwndFoundWindow = hParent;
+                DisplayInfoOnFoundWindow(m_hwndFoundWindow);
+                TCHAR szText[256];
+                _stprintf_s(szText, _countof(szText), _T("0x%p"), m_hwndFoundWindow);
+                SetDlgItemText(*this, IDC_WINDOW, szText);
             }
             break;
         case IDC_ABOUTLINK: {
@@ -428,6 +440,7 @@ bool CMainDlg::DisplayInfoOnFoundWindow(HWND hwndFoundWindow)
 {
     RECT  rect{}; // Rectangle area of the found window.
     TCHAR szClassName[100]{};
+    HWND  hParent = GetParent(hwndFoundWindow);
 
     // Get the screen coordinates of the rectangle of the found window.
     GetWindowRect(hwndFoundWindow, &rect);
@@ -448,6 +461,7 @@ bool CMainDlg::DisplayInfoOnFoundWindow(HWND hwndFoundWindow)
                                       rect.bottom - rect.top);
 
     SetDlgItemText(*this, IDC_EDIT_STATUS, sText.c_str());
+    SetDlgItemText(*this, IDC_PARENT_HANDLE, hParent ? CStringUtils::Format(L"Parent:0x%p", hParent).c_str() : L"");
 
     return true;
 }

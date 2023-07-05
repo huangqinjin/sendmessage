@@ -52,6 +52,7 @@ protected:
 
 private:
     HWND            m_hParent;
+    CHyperLink      m_ParentLink;
     CHyperLink      m_link;
     AeroControlBase m_aerocontrols;
     bool            m_bStartSearchWindow;

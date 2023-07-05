@@ -75,8 +75,9 @@ BEGIN
     DEFPUSHBUTTON   "&Quit",IDOK,343,166,50,14
     ICON            IDI_SEARCHW,IDC_SEARCHW,7,7,20,20,SS_NOTIFY | SS_CENTERIMAGE
     LTEXT           "Pos:",IDC_POS,34,7,15,8
-    LTEXT           "0",IDC_STATIC_X_POS,57,7,15,8
-    LTEXT           "0",IDC_STATIC_Y_POS,75,7,17,8
+    LTEXT           "0",IDC_STATIC_X_POS,57,7,20,8
+    LTEXT           "0",IDC_STATIC_Y_POS,80,7,20,8
+    LTEXT           "",IDC_PARENT_HANDLE,113,7,97,8
     LTEXT           "",IDC_EDIT_STATUS,72,18,321,50
     GROUPBOX        "Send Message",IDC_SENDGROUP,7,76,386,84
     LTEXT           "Window:",IDC_STATIC,12,92,36,8
