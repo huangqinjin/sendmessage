@@ -445,11 +445,19 @@ bool CMainDlg::DisplayInfoOnFoundWindow(HWND hwndFoundWindow)
     // Get the screen coordinates of the rectangle of the found window.
     GetWindowRect(hwndFoundWindow, &rect);
 
+    POINT lr = {rect.left, rect.top}, rb = {rect.right, rect.bottom};
+    ScreenToClient(hParent, &lr);
+    ScreenToClient(hParent, &rb);
+
     // Get the class name of the found window.
     GetClassName(hwndFoundWindow, szClassName, _countof(szClassName));
 
     // Display some information on the found window.
-    auto sText = CStringUtils::Format(L"Window Handle == 0x%p\r\nClass Name : %s\r\nAccessible Name : %s\r\nRECT == { Left: %d, Top: %d, Right: %d, Bottom: %d } [ %d x %d ]\r\n",
+    auto sText = CStringUtils::Format(
+                                      L"Window Handle == 0x%p\r\n"
+                                      L"Class Name : %s\r\nAccessible Name : %s\r\n"
+                                      L"S RECT == { Left: %d, Top: %d, Right: %d, Bottom: %d } [ %d x %d ]\r\n"
+                                      L"C RECT == { Left: %d, Top: %d, Right: %d, Bottom: %d } [ %d x %d ]\r\n",
                                       hwndFoundWindow,
                                       szClassName,
                                       CAccessibleName(hwndFoundWindow).c_str(),
@@ -458,7 +466,8 @@ bool CMainDlg::DisplayInfoOnFoundWindow(HWND hwndFoundWindow)
                                       rect.right,
                                       rect.bottom,
                                       rect.right - rect.left,
-                                      rect.bottom - rect.top);
+                                      rect.bottom - rect.top,
+                                      lr.x, lr.y, rb.x, rb.y, rb.x - lr.x, rb.y - lr.y);
 
     SetDlgItemText(*this, IDC_EDIT_STATUS, sText.c_str());
     SetDlgItemText(*this, IDC_PARENT_HANDLE, hParent ? CStringUtils::Format(L"Parent:0x%p", hParent).c_str() : L"");
